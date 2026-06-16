@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Student Performance Predictor</h1>
+        <p class="subtitle">Enter student details to predict academic grade using AI</p>
+
+        <div class="glass-card">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" id="age" min="15" max="20" value="17" />
+                </div>
+
+                <div class="form-group">
+                    <label>Weekly Study Hours</label>
+                    <input type="number" id="studyTime" min="0" max="40" step="0.5" value="15" />
+                </div>
+
+                <div class="form-group">
+                    <label>Number of Absences</label>
+                    <input type="number" id="absences" min="0" max="50" value="5" />
+                </div>
+
+                <div class="form-group">
+                    <label>Tutoring</label>
+                    <select id="tutoring">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Parental Support</label>
+                    <select id="parentalSupport">
+                        <option value="0">None</option>
+                        <option value="1">Low</option>
+                        <option value="2">Moderate</option>
+                        <option value="3">High</option>
+                        <option value="4">Very High</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Extracurricular</label>
+                    <select id="extracurricular">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Sports</label>
+                    <select id="sports">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Music</label>
+                    <select id="music">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Volunteering</label>
+                    <select id="volunteering">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="predict-btn" onclick="predict()">
+                🔮 Predict Grade
+            </button>
+
+            <div class="loading" id="loading">
+                ⏳ Analyzing student data...
+            </div>
+
+            <div class="result-card" id="result">
+                <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">PREDICTED GRADE</p>
+                <div class="grade-display" id="gradeDisplay">-</div>
+                <div class="grade-message" id="gradeMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function predict() {
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            const data = {
+                age: document.getElementById('age').value,
+                studyTime: document.getElementById('studyTime').value,
+                absences: document.getElementById('absences').value,
+                tutoring: document.getElementById('tutoring').value,
+                parentalSupport: document.getElementById('parentalSupport').value,
+                extracurricular: document.getElementById('extracurricular').value,
+                sports: document.getElementById('sports').value,
+                music: document.getElementById('music').value,
+                volunteering: document.getElementById('volunteering').value
+            };
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const res = await response.json();
+
+            loading.style.display = 'none';
+            result.style.display = 'block';
+            
+            document.getElementById('gradeDisplay').textContent = res.grade;
+            document.getElementById('gradeDisplay').style.color = res.color;
+            document.getElementById('gradeMessage').textContent = res.message;
+        }
+    </script>
+</body>
+</html>
